@@ -21,7 +21,7 @@ rules:
   resources:
   - pods
   - deployments
-  verbs: ["get", "create", "list", "watch"]
+  verbs: ["get", "create", "list", "watch", "patch"]
   
 ---
 # RoleBinding
