@@ -20,7 +20,7 @@ rules:
 - apiGroups: ["*"]
   resources:
   - pods
-  verbs: ["get", "create", "list", "watch", "patch"]
+  verbs: ["get", "create", "watch", "patch"]
   
 ---
 # RoleBinding
