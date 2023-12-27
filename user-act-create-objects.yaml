@@ -19,7 +19,7 @@ metadata:
 rules:
 - apiGroups: ["*"]
   resources:
-  
+  - pods
   - deployments
   verbs: ["get", "create", "list", "watch", "patch"]
   
