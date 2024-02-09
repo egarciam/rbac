@@ -1,0 +1,48 @@
+## Para crear un Kubeconfig con permisos limitados hay que crear estos objetos
+# Aqui el usuario es p.e. cloud-op
+# Solo puede interactuar con pods y deployments en el namespace default
+---
+# Service account namespaced
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin
+  namespace: default
+
+---
+# ClusterRole: 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: admin
+  namespace: default
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+  
+---
+# ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+subjects:
+- kind: ServiceAccount
+  name: admin
+  namespace: default
+
+---
+# Secret linked to SA. Namespaced
+apiVersion: v1
+kind: Secret
+metadata:
+  name: admin
+  namespace: default
+  annotations:
+    kubernetes.io/service-account.name: admin
+type: kubernetes.io/service-account-token
