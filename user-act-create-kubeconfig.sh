@@ -3,7 +3,58 @@
 # Obtiene la info y configura un kubeconfig
 # fuente: https://devopscube.com/kubernetes-kubeconfig-file/
 
-SERVICE_ACCCOUNT=cloud-op
+# Function to print usage
+print_usage() {
+    echo "Usage: $0 [-h] -s <sa> [-n <ns>]"
+    echo "Description: This script requires the service account (sa) parameter specified with -sa and an optional namespace (ns) parameter specified with -ns."
+    echo "Options:"
+    echo "  -h         Print this help message"
+    echo "  -s <sa>   Specify the service account"
+    echo "  -n <ns>   Specify the namespace (optional, default is 'default')"
+    exit 1
+}
+
+if [ $# -lt 1 ]; then
+   print_usage
+fi
+
+# Parse command-line options
+while getopts ":h:s:n:" opt; do
+    case ${opt} in
+        h )
+            print_usage
+            ;;
+        s )
+            sa=$OPTARG
+            echo $OPTARG
+            ;;
+        n )
+            ns=$OPTARG
+            ;;
+        \? )
+            echo "Invalid option: $OPTARG" 1>&2
+            print_usage
+            ;;
+    esac
+done
+
+# Check if the service account is provided
+if [ -z "$sa" ]; then
+    echo "Error: Service account (-s) parameter is required."
+    print_usage
+fi
+
+# Set the namespace to default if not provided
+if [ -z "$ns" ]; then
+    ns="default"
+fi
+
+# Your script logic goes here
+echo "Service Account: $sa"
+echo "Namespace: $ns"
+
+
+SERVICE_ACCCOUNT=$sa
 
 SA_SECRET_TOKEN=$(kubectl -n default get secret/${SERVICE_ACCCOUNT} -o=go-template='{{.data.token}}' | base64 --decode)
 CLUSTER_NAME=$(kubectl config current-context)
@@ -12,7 +63,7 @@ CLUSTER_CA_CERT=$(kubectl config view --raw -o=go-template='{{range .clusters}}{
 CLUSTER_ENDPOINT=$(kubectl config view --raw -o=go-template='{{range .clusters}}{{if eq .name "'''${CURRENT_CLUSTER}'''"}}{{ .cluster.server }}{{end}}{{ end }}')
 
 
-cat << EOF > ${SERVICE_ACCCOUNT}-kubeconfig
+cat << EOF > ${SERVICE_ACCCOUNT}-${CURRENT_CLUSTER}-kubeconfig
 apiVersion: v1
 kind: Config
 current-context: ${CLUSTER_NAME}
