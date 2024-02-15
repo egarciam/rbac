@@ -19,14 +19,13 @@ if [ $# -lt 1 ]; then
 fi
 
 # Parse command-line options
-while getopts ":h:s:n:" opt; do
+while getopts "hs:n:" opt; do
     case ${opt} in
         h )
             print_usage
             ;;
         s )
             sa=$OPTARG
-            echo $OPTARG
             ;;
         n )
             ns=$OPTARG

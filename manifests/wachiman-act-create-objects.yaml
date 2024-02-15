@@ -17,7 +17,7 @@ metadata:
   name: wachiman
   namespace: default
 rules:
-- apiGroups: ["*"]
+- apiGroups: [""]
   resources:
   - pods
   verbs: ["get", "create", "list", "watch"]
