@@ -55,7 +55,7 @@ echo "Namespace: $ns"
 
 SERVICE_ACCCOUNT=$sa
 
-SA_SECRET_TOKEN=$(kubectl -n default get secret/${SERVICE_ACCCOUNT} -o=go-template='{{.data.token}}' | base64 --decode)
+SA_SECRET_TOKEN=$(kubectl -n $ns get secret/${SERVICE_ACCCOUNT} -o=go-template='{{.data.token}}' | base64 --decode)
 CLUSTER_NAME=$(kubectl config current-context)
 CURRENT_CLUSTER=$(kubectl config view --raw -o=go-template='{{range .contexts}}{{if eq .name "'''${CLUSTER_NAME}'''"}}{{ index .context "cluster" }}{{end}}{{end}}')
 CLUSTER_CA_CERT=$(kubectl config view --raw -o=go-template='{{range .clusters}}{{if eq .name "'''${CURRENT_CLUSTER}'''"}}"{{with index .cluster "certificate-authority-data" }}{{.}}{{end}}"{{ end }}{{ end }}')
